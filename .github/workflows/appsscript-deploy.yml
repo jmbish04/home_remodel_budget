@@ -12,35 +12,35 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'appsscript/package-lock.json'
-      
+
       - name: Install dependencies
         working-directory: ./appsscript
-        run: npm ci
-      
+        run: npm install
+
       - name: Setup .clasp.json
         working-directory: ./appsscript
         run: |
           echo '${{ secrets.CLASP_JSON }}' > .clasp.json
-      
+
       - name: Setup .clasprc.json
         run: |
           echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
-      
+
       - name: Push to Apps Script
         working-directory: ./appsscript
         run: npm run push
-      
+
       - name: Deploy Apps Script
         working-directory: ./appsscript
         run: npm run deploy
