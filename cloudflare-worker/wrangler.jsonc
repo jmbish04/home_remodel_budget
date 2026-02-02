@@ -58,16 +58,5 @@
     "enabled": true
   },
 
-  // Development environment
-  "env": {
-    "development": {
-      "name": "home-remodel-budget-dev"
-    },
-    "production": {
-      "name": "home-remodel-budget-prod"
-      // Uncomment and configure for production
-      // "workers_dev": false,
-      // "route": "example.com/*"
-    }
-  }
+  
 }
