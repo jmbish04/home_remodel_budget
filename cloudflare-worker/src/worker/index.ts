@@ -1,6 +1,12 @@
 /**
  * Home Remodel Budget - Cloudflare Worker
  * Main entry point for the API and agent orchestration
+ * 
+ * Security Notes:
+ * - CORS is currently set to allow all origins for development
+ * - In production, restrict CORS to specific trusted origins
+ * - Consider adding authentication middleware (e.g., API keys, JWT) for /api/chat endpoint
+ * - Git operations use GITHUB_TOKEN - protect this secret carefully
  */
 
 // Re-export Sandbox for Durable Object binding
@@ -12,6 +18,8 @@ import { handleChat } from './agent';
 // It includes: ASSETS, Sandbox, AI, GITHUB_TOKEN, OPENAI_API_KEY, 
 // ANTHROPIC_API_KEY, CLOUDFLARE_API_TOKEN, APPS_SCRIPT_ID, REPO_URL
 
+// CORS configuration
+// TODO: In production, replace '*' with specific allowed origins
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',

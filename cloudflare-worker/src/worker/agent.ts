@@ -60,13 +60,43 @@ When users ask you to make changes to the Apps Script project:
 
 Be helpful, clear, and always explain what you're doing. If you make code changes, explain what the changes do.`;
 
+/**
+ * Validates that a message object has the required structure
+ */
+function isValidMessage(msg: unknown): msg is ChatMessage {
+  if (typeof msg !== 'object' || msg === null) return false;
+  const m = msg as Record<string, unknown>;
+  return (
+    typeof m.role === 'string' &&
+    ['user', 'assistant', 'system', 'tool'].includes(m.role) &&
+    typeof m.content === 'string'
+  );
+}
+
+/**
+ * Validates the request body structure
+ */
+function validateRequestBody(body: unknown): ChatMessage[] {
+  if (typeof body !== 'object' || body === null) {
+    throw new Error('Invalid request body');
+  }
+  const b = body as Record<string, unknown>;
+  if (!Array.isArray(b.messages)) {
+    return [];
+  }
+  // Filter and validate each message
+  return b.messages.filter(isValidMessage);
+}
+
 export async function handleChat(
   request: Request,
   env: Env
 ): Promise<Response> {
   try {
-    const body = await request.json() as { messages: ChatMessage[] };
-    const messages = body.messages || [];
+    const body = await request.json();
+    
+    // Validate the request body structure
+    const messages = validateRequestBody(body);
 
     // Create sandbox instance
     const sandbox = getSandbox(env.Sandbox, 'budget-agent');
@@ -196,31 +226,54 @@ async function executeToolCall(
   toolCall: ToolCall,
   config: GitToolsConfig
 ): Promise<string> {
-  const args = JSON.parse(toolCall.function.arguments || '{}');
+  // Safely parse tool arguments with error handling
+  let args: Record<string, unknown>;
+  try {
+    args = JSON.parse(toolCall.function.arguments || '{}');
+    if (typeof args !== 'object' || args === null) {
+      args = {};
+    }
+  } catch {
+    return `Error: Invalid arguments for tool ${toolCall.function.name}`;
+  }
 
-  switch (toolCall.function.name) {
-    case 'clone_repository':
-      return await cloneRepository(sandbox, config);
+  try {
+    switch (toolCall.function.name) {
+      case 'clone_repository':
+        return await cloneRepository(sandbox, config);
 
-    case 'read_file':
-      return await readAppsScriptFile(sandbox, args.fileName);
+      case 'read_file':
+        if (typeof args.fileName !== 'string') {
+          return 'Error: fileName must be a string';
+        }
+        return await readAppsScriptFile(sandbox, args.fileName);
 
-    case 'write_file':
-      return await writeAppsScriptFile(sandbox, args.fileName, args.content);
+      case 'write_file':
+        if (typeof args.fileName !== 'string' || typeof args.content !== 'string') {
+          return 'Error: fileName and content must be strings';
+        }
+        return await writeAppsScriptFile(sandbox, args.fileName, args.content);
 
-    case 'list_files':
-      return await listAppsScriptFiles(sandbox);
+      case 'list_files':
+        return await listAppsScriptFiles(sandbox);
 
-    case 'commit_changes':
-      return await commitChanges(sandbox, args.message);
+      case 'commit_changes':
+        if (typeof args.message !== 'string') {
+          return 'Error: message must be a string';
+        }
+        return await commitChanges(sandbox, args.message);
 
-    case 'push_changes':
-      return await pushChanges(sandbox, config);
+      case 'push_changes':
+        return await pushChanges(sandbox, config);
 
-    case 'get_status':
-      return await getGitStatus(sandbox);
+      case 'get_status':
+        return await getGitStatus(sandbox);
 
-    default:
-      return `Unknown tool: ${toolCall.function.name}`;
+      default:
+        return `Unknown tool: ${toolCall.function.name}`;
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return `Error executing ${toolCall.function.name}: ${errorMessage}`;
   }
 }
