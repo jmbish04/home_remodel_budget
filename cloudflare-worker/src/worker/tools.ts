@@ -51,12 +51,10 @@ export async function cloneRepository(
   sandbox: Sandbox,
   config: GitToolsConfig
 ): Promise<string> {
-  // Note: Token embedding in URL is the standard pattern for gitCheckout
-  // The sandbox isolates this from being logged in most cases
-  const authenticatedUrl = config.repoUrl.replace(
-    'https://github.com/',
-    `https://${config.githubToken}@github.com/`
-  );
+  // Use URL constructor for robust URL manipulation
+  const url = new URL(config.repoUrl);
+  url.username = config.githubToken;
+  const authenticatedUrl = url.toString();
   
   await sandbox.gitCheckout(authenticatedUrl, {
     targetDir: '/workspace/repo',
@@ -140,11 +138,10 @@ export async function pushChanges(
   sandbox: Sandbox,
   config: GitToolsConfig
 ): Promise<string> {
-  // Set the remote URL with authentication
-  const authenticatedUrl = config.repoUrl.replace(
-    'https://github.com/',
-    `https://${config.githubToken}@github.com/`
-  );
+  // Use URL constructor for robust URL manipulation
+  const url = new URL(config.repoUrl);
+  url.username = config.githubToken;
+  const authenticatedUrl = url.toString();
   
   await sandbox.exec('git', [
     '-C',

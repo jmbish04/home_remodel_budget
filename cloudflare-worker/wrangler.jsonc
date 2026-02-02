@@ -49,9 +49,8 @@
   },
 
   // Environment variables
-  // Note: GITHUB_TOKEN should be set via `wrangler secret put GITHUB_TOKEN`
+  // Note: GITHUB_TOKEN and APPS_SCRIPT_ID should be set via `wrangler secret put`
   "vars": {
-    "APPS_SCRIPT_ID": "1cKMxHkn5WvFC7W7GBxz0_BwKG0jb46wdsfzaL1J0pqItuHY3d02Ppoml",
     "REPO_URL": "https://github.com/jmbish04/home_remodel_budget"
   },
 

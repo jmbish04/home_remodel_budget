@@ -21,15 +21,14 @@ import {
 // The global Env interface is defined in worker-configuration.d.ts
 
 // AI Model configuration - extracted to constants for maintainability
-const AI_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
-const AI_API_BASE = 'https://api.cloudflare.com/client/v4/accounts/ai/run';
-const AI_API_ENDPOINT = `${AI_API_BASE}/${AI_MODEL}`;
+const AI_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast' as const;
 const DEFAULT_MAX_TOKENS = 2048;
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system' | 'tool';
   content: string;
   tool_call_id?: string;
+  tool_calls?: ToolCall[];
 }
 
 interface ToolCall {
@@ -145,25 +144,21 @@ async function runAgentConversation(
     ...messages,
   ];
 
-  // Call the AI with tools
-  const aiResponse = await callAI(env, fullMessages, true);
-
-  if (!aiResponse.ok) {
-    throw new Error(`AI API error: ${aiResponse.status}`);
-  }
-
-  const aiResult = await aiResponse.json() as {
-    result?: {
-      response?: string;
-      tool_calls?: ToolCall[];
-    };
+  // Call the AI with tools using env.AI.run()
+  const aiResult = await env.AI.run(AI_MODEL, {
+    messages: fullMessages,
+    tools: agentTools,
+    max_tokens: DEFAULT_MAX_TOKENS,
+  }) as {
+    response?: string;
+    tool_calls?: ToolCall[];
   };
 
   // Check if there are tool calls to execute
-  if (aiResult.result?.tool_calls && aiResult.result.tool_calls.length > 0) {
+  if (aiResult.tool_calls && aiResult.tool_calls.length > 0) {
     const toolResultMessages: ChatMessage[] = [];
     
-    for (const toolCall of aiResult.result.tool_calls) {
+    for (const toolCall of aiResult.tool_calls) {
       const result = await executeToolCall(sandbox, toolCall, gitConfig);
       // Add tool result as a tool message (proper format for tool results)
       toolResultMessages.push({
@@ -173,52 +168,24 @@ async function runAgentConversation(
       });
     }
 
-    // Build follow-up messages with tool results as system context
+    // Build follow-up messages with tool results
     const followUpMessages: ChatMessage[] = [
       ...fullMessages,
-      {
-        role: 'system',
-        content: `Tool execution results:\n${toolResultMessages.map(m => m.content).join('\n\n')}\n\nPlease summarize these results for the user.`,
-      },
+      { role: 'assistant', content: '', tool_calls: aiResult.tool_calls },
+      ...toolResultMessages,
     ];
 
-    const followUpResponse = await callAI(env, followUpMessages, false);
-
-    const followUpResult = await followUpResponse.json() as {
-      result?: { response?: string };
+    const followUpResult = await env.AI.run(AI_MODEL, {
+      messages: followUpMessages,
+      max_tokens: DEFAULT_MAX_TOKENS,
+    }) as {
+      response?: string;
     };
 
-    return followUpResult.result?.response || 'I executed the requested operations.';
+    return followUpResult.response || 'I executed the requested operations.';
   }
 
-  return aiResult.result?.response || 'I apologize, but I could not generate a response.';
-}
-
-/**
- * Helper function to call the AI API
- * Centralizes the API call logic for consistency and maintainability
- */
-async function callAI(
-  env: Env,
-  messages: ChatMessage[],
-  includeTools: boolean
-): Promise<Response> {
-  const requestBody: Record<string, unknown> = {
-    messages,
-    max_tokens: DEFAULT_MAX_TOKENS,
-  };
-
-  if (includeTools) {
-    requestBody.tools = agentTools;
-  }
-
-  return env.AI.fetch(AI_API_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestBody),
-  });
+  return aiResult.response || 'I apologize, but I could not generate a response.';
 }
 
 async function executeToolCall(

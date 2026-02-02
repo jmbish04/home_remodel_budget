@@ -1,14 +1,12 @@
 # Sandbox container for Git operations
 # This container provides Git and Node.js for Apps Script modifications
 
-FROM ubuntu:22.04
+FROM node:20-bullseye-slim
 
 # Install required packages
 RUN apt-get update && apt-get install -y \
     git \
     curl \
-    nodejs \
-    npm \
     && rm -rf /var/lib/apt/lists/*
 
 # Create workspace directory

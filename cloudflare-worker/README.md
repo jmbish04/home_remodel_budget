@@ -55,6 +55,7 @@ cp .dev.vars.example .dev.vars
 Required secrets:
 - `GITHUB_TOKEN`: GitHub Personal Access Token with `repo` scope
 - `OPENAI_API_KEY`: OpenAI API key for the agent
+- `APPS_SCRIPT_ID`: Google Apps Script project ID
 
 ### 3. Generate Types
 
@@ -138,6 +139,7 @@ npm run deploy
 ```bash
 wrangler secret put GITHUB_TOKEN
 wrangler secret put OPENAI_API_KEY
+wrangler secret put APPS_SCRIPT_ID
 ```
 
 ## Architecture
