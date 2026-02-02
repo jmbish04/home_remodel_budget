@@ -1,5 +1,4 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   // Home Remodel Budget - Cloudflare Worker Configuration
   // This worker hosts an Astro frontend and an agentic backend for Apps Script orchestration
   
