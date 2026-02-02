@@ -1,0 +1,16 @@
+# Local development secrets
+# Copy this file to .dev.vars and fill in the actual values
+# DO NOT commit .dev.vars to git
+
+# GitHub Personal Access Token for Sandbox Git operations
+# Required scopes: repo (full control of private repositories)
+GITHUB_TOKEN="your-github-personal-access-token"
+
+# OpenAI API Key for the Agents SDK
+OPENAI_API_KEY="sk-your-openai-api-key"
+
+# Anthropic API Key (optional, if using Anthropic models)
+ANTHROPIC_API_KEY="sk-ant-your-anthropic-api-key"
+
+# Cloudflare API Token (optional, for internal API calls)
+CLOUDFLARE_API_TOKEN="your-cloudflare-api-token"

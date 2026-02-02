@@ -1,0 +1,73 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Home Remodel Budget - Track and manage your home renovation expenses" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-background font-sans antialiased">
+    <div class="relative flex min-h-screen flex-col">
+      <header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div class="container flex h-14 items-center">
+          <div class="mr-4 flex">
+            <a href="/" class="mr-6 flex items-center space-x-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-6 w-6"
+              >
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span class="font-bold">Home Remodel Budget</span>
+            </a>
+          </div>
+          <nav class="flex flex-1 items-center justify-end space-x-4">
+            <a
+              href="/"
+              class="text-sm font-medium transition-colors hover:text-primary"
+            >
+              Dashboard
+            </a>
+            <a
+              href="/chat"
+              class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
+              Chat
+            </a>
+          </nav>
+        </div>
+      </header>
+      <main class="flex-1">
+        <slot />
+      </main>
+      <footer class="border-t py-6 md:py-0">
+        <div class="container flex flex-col items-center justify-between gap-4 md:h-14 md:flex-row">
+          <p class="text-sm text-muted-foreground">
+            © 2024 Home Remodel Budget. Built with Cloudflare Workers.
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/globals.css';
+</style>

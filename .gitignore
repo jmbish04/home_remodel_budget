@@ -145,3 +145,5 @@ appsscript/.clasp.json
 # Cloudflare Worker specific
 .wrangler/
 .dev.vars
+.dev.vars.*
+!.dev.vars.example

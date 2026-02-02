@@ -1,0 +1,75 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Home Remodel Budget - Cloudflare Worker Configuration
+  // This worker hosts an Astro frontend and an agentic backend for Apps Script orchestration
+  
+  "name": "home-remodel-budget",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2024-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Static assets configuration for Astro frontend
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+
+  // Sandbox container configuration for code execution
+  // The Sandbox SDK is built on Cloudflare Containers
+  "containers": [
+    {
+      "class_name": "Sandbox",
+      "image": "./Dockerfile",
+      "instance_type": "lite",
+      "max_instances": 1
+    }
+  ],
+
+  // Durable Objects bindings for Sandbox
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "Sandbox",
+        "name": "Sandbox"
+      }
+    ]
+  },
+
+  // Migrations for Durable Objects
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["Sandbox"]
+    }
+  ],
+
+  // Workers AI binding for LLM inference
+  "ai": {
+    "binding": "AI"
+  },
+
+  // Environment variables
+  // Note: GITHUB_TOKEN should be set via `wrangler secret put GITHUB_TOKEN`
+  "vars": {
+    "APPS_SCRIPT_ID": "1cKMxHkn5WvFC7W7GBxz0_BwKG0jb46wdsfzaL1J0pqItuHY3d02Ppoml",
+    "REPO_URL": "https://github.com/jmbish04/home_remodel_budget"
+  },
+
+  // Observability for logging and debugging
+  "observability": {
+    "enabled": true
+  },
+
+  // Development environment
+  "env": {
+    "development": {
+      "name": "home-remodel-budget-dev"
+    },
+    "production": {
+      "name": "home-remodel-budget-prod"
+      // Uncomment and configure for production
+      // "workers_dev": false,
+      // "route": "example.com/*"
+    }
+  }
+}

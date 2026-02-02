@@ -1,0 +1,95 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Chat from '../components/Chat';
+---
+
+<Layout title="Home Remodel Budget">
+  <div class="container py-8">
+    <div class="mx-auto max-w-4xl space-y-8">
+      <!-- Hero Section -->
+      <section class="text-center space-y-4">
+        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
+          Home Remodel Budget Tracker
+        </h1>
+        <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+          Manage your home renovation expenses with AI-powered assistance.
+          Chat with our agent to update categories, track spending, and manage your Google Apps Script project.
+        </p>
+      </section>
+
+      <!-- Features Grid -->
+      <section class="grid gap-6 md:grid-cols-3">
+        <div class="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="h-6 w-6 text-primary"
+            >
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">AI-Powered Chat</h3>
+          <p class="text-sm text-muted-foreground">
+            Interact with our intelligent assistant to manage your budget through natural conversation.
+          </p>
+        </div>
+
+        <div class="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="h-6 w-6 text-primary"
+            >
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Apps Script Integration</h3>
+          <p class="text-sm text-muted-foreground">
+            Seamlessly update your Google Apps Script project with new expense categories and features.
+          </p>
+        </div>
+
+        <div class="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="h-6 w-6 text-primary"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Automatic Deployment</h3>
+          <p class="text-sm text-muted-foreground">
+            Changes are automatically deployed via GitHub Actions when you approve updates.
+          </p>
+        </div>
+      </section>
+
+      <!-- Chat Section -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-bold text-center">Chat with Your Budget Assistant</h2>
+        <Chat client:load />
+      </section>
+    </div>
+  </div>
+</Layout>

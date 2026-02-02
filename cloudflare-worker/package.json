@@ -1,15 +1,51 @@
 {
   "name": "home-remodel-budget-worker",
   "version": "1.0.0",
-  "description": "Cloudflare Worker for home remodel budget API",
-  "main": "src/index.js",
+  "type": "module",
+  "description": "Cloudflare Worker for home remodel budget with Astro frontend and agentic backend",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "npm run type-gen && astro build && wrangler deploy",
+    "type-gen": "wrangler types",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "tail": "wrangler tail"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@assistant-ui/react": "^0.5.0",
+    "@astrojs/cloudflare": "^11.0.0",
+    "@astrojs/react": "^3.0.0",
+    "@astrojs/tailwind": "^5.0.0",
+    "@cloudflare/sandbox": "^0.3.0",
+    "@radix-ui/react-scroll-area": "^1.0.5",
+    "@radix-ui/react-slot": "^1.0.2",
+    "agents": "^0.1.0",
+    "ai": "^3.0.0",
+    "astro": "^4.0.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.314.0",
+    "openai": "^4.20.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.2.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
   "devDependencies": {
-    "wrangler": "^3.0.0"
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^14.0.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.0",
+    "jsdom": "^24.0.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0",
+    "wrangler": "^4.61.1"
   }
 }
