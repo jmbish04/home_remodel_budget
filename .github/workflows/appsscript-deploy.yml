@@ -12,6 +12,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Updated to latest LTS
+          node-version: '20'
 
       - name: Install dependencies
         working-directory: ./appsscript
@@ -31,15 +34,16 @@ jobs:
           CLASP_CONFIG: ${{ secrets.CLASP_JSON }}
           CLASPRC_CONFIG: ${{ secrets.CLASPRC_JSON }}
         run: |
-          # Write .clasp.json to the project directory
+          # Write configuration files directly into the working directory
           echo "$CLASP_CONFIG" > ./appsscript/.clasp.json
-          # Write .clasprc.json to the home directory
-          echo "$CLASPRC_CONFIG" > ~/.clasprc.json
+          echo "$CLASPRC_CONFIG" > ./appsscript/.clasprc.json
 
       - name: Push to Apps Script
         working-directory: ./appsscript
-        run: npx @google/clasp push -f
+        # We use --auth to point directly to the file we just created
+        run: npx @google/clasp push -f --auth ./.clasprc.json
 
       - name: Deploy Apps Script
         working-directory: ./appsscript
-        run: npx @google/clasp deploy
+        # This creates a new deployment version on Google's side
+        run: npx @google/clasp deploy --auth ./.clasprc.json
